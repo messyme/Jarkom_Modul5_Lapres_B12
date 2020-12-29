@@ -8,7 +8,7 @@
   2. [Soal B](#B)
   3. [Soal C](#C)
   4. [Soal D](#D)
-  </br>
+
   5. [Nomor 1](#1)
   6. [Nomor 2](#2)
   7. [Nomor 3](#3)
