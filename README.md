@@ -254,10 +254,32 @@ iptables -A LOGGING -j DROP
 <a name="6"></a>
 ## SOAL NO 6
 ### Karena kita memiliki 2 buah WEB Server, Bibah ingin SURABAYA disetting sehingga setiap request dari client yang mengakses DNS Server akan didistribusikan secara bergantian pada PROBOLINGGO port 80 dan MADIUN port 80.
+- Pada **SURABAYA** tambahkan:
+```
+iptables -t nat -A PREROUTING -p tcp -d 10.151.83.106 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.168.0.10:80
+iptables -t nat -A PREROUTING -p tcp -d 10.151.83.106 -j DNAT --to-destination 192.168.0.11:80
+iptables -t nat -A POSTROUTING -p tcp -d 192.168.0.10 --dport 80 -j SNAT --to-source 10.151.83.106
+iptables -t nat -A POSTROUTING -p tcp -d 192.168.0.11 --dport 80 -j SNAT --to-source 10.151.83.106
+```
+- Untuk melakukan testing:
+  - Install netcat pada UML **Malang**, **Probolinggo**, **Madiun**, **Surabaya**, serta **Gresik** dengan menggunakan perintah ```apt-get install netcat```
+  - Pada UML **Madiun** gunakan perintah ```nc -l -p 80```
+  - Pada UML **Probolinggo** gunakan perintah ```nc -l -p 80```
+  - Pada UML Client **Gresik** gunakan perintah ```nc ipMalang 80```
+  - Ketik bebas pada UML **Gresik** maka akan muncul di UML **Madiun** atau **Probolinggo**
 </br></br></br>
 
 
 <a name="7"></a>
 ## SOAL NO 7
 ### Bibah ingin agar semua paket didrop oleh firewall (dalam topologi) tercatat dalam log pada setiap UML yang memiliki aturan drop.
+- Pada **SURABAYA** tambahkan:
+```
+iptables -N LOGGING
+iptables -A INPUT -j LOGGING
+iptables -A OUTPUT -j LOGGING
+iptables -A LOGGING -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+iptables -A LOGGING -j DROP
+```
+- Jalankan iptables dan gunakan perintah ```nano /var/log/messages```
 </br></br></br>
