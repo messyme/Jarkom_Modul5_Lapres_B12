@@ -17,7 +17,7 @@
   10. [Nomor 6](#6)
   11. [Nomor 7](#7)
   </br></br></br>
-![testestes]()
+
 <a name="A"></a>
 ## SOAL A
 ### Tugas pertama kalian yaitu membuat topologi jaringan sesuai dengan rancangan yang diberikan Bibah seperti dibawah ini :
