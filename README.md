@@ -176,30 +176,78 @@ Berdasarkan gambar topologi di atas, dibuatlah file topologi.sh:
 <a name="1"></a>
 ## SOAL NO 1
 ### Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi SURABAYA menggunakan iptables, namun Bibah tidak ingin kalian menggunakan MASQUERADE.
+- Tambahkan iptables pada **SURABAYA**
+  ```
+  iptables -t nat -A POSTROUTING -s 192.168.0.0/16 -o eth0 -j SNAT --to source 10.151.74.54
+  ```
+- Pada **MALANG** edit file ```/etc/bind/named.conf.options``` agar **GRESIK** dan **SIDOARJO** dapat mengakses dari luar
+  - uncomment 
+    ```
+    // dnssec-validation auto;
+    ```
+  - Ubah 0.0.0.0 menjadi 8.8.8.8
+    ```
+    forwarders {
+      8.8.8.8;
+    };
+    ```
+  - Kemudian tambahkan 
+    ```
+    allow-query{any;};
+    ```  
+- Lakukan testing dengan ping **google.com** pada UML **SURABAYA**
 </br></br></br>
 
 
 <a name="2"></a>
 ## SOAL NO 2
 ### Kalian diminta untuk mendrop semua akses SSH dari luar Topologi (UML) Kalian pada server yang memiliki ip DMZ (DHCP dan DNS SERVER) pada SURABAYA demi menjaga keamanan.
+- Pada **SURABAYA** tambahkan iptables
+```
+iptables -N LOGGING
+iptables -A FORWARD -p tcp --dport 22 -d 10.151.83.104/29 -i eth0 -j LOGGING
+iptables -A LOGGING -m limit --limit 5/min -j LOG --log-prefix "iptables_FORWARD_denied: " --log-level 7
+iptables -A LOGGING -j DROP
+```
+- Lakukan testing dengan cara:
+  - Install netcat di UML **Mojokerto** dan UML **Malang** dengan perintah ```apt-get install netcat```
+  - Pada UML **Mojokerto** dan **Malang** gunakan perintah ```nc -l -p <nomor_port>```
+
 </br></br></br>
 
 
 <a name="3"></a>
 ## SOAL NO 3
 ### Karena tim kalian maksimal terdiri dari 3 orang, Bibah meminta kalian untuk membatasi DHCP dan DNS server hanya boleh menerima maksimal 3 koneksi ICMP secara bersamaan yang berasal dari mana saja menggunakan iptables pada masing masing server, selebihnya akan di DROP.
+- Pada **MALANG** dan **MOJOKERTO** tambahkan iptables sebagai berikut:
+```
+iptables -N LOGGING
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j LOGGING
+iptables -A LOGGING -m limit --limit 5/min -j LOG --log-prefix "iptables_FORWARD_denied: " --log-level 7
+iptables -A LOGGING -j DROP
+```
+- Lakukan testing dengan melakukan ping pada 4 UML
 </br></br></br>
 
 
 <a name="4"></a>
 ## SOAL NO 4
-### kemudian kalian diminta untuk membatasi akses ke MALANG yang berasal dari SUBNET SIDOARJO dan SUBNET GRESIK dengan peraturan sebagai berikut: (4) Akses dari subnet SIDOARJO hanya diperbolehkan pada pukul 07.00 - 17.00 pada hari Senin sampai Jumat.
+### kemudian kalian diminta untuk membatasi akses ke MALANG yang berasal dari SUBNET SIDOARJO dan SUBNET GRESIK dengan peraturan sebagai berikut: (4) Akses dari subnet SIDOARJO hanya diperbolehkan pada pukul 07.00 - 17.00 pada hari Senin sampai Jumat. 
+- Pada **MALANG** tambahkan iptables:
+  ```
+  iptables -A INPUT -s 192.168.3.0/24 -m time --timestart 07:00 --timestop 17:00 --weekdays Mon,Tue,Wed,Thu,Fri -j ACCEPT
+  iptables -A INPUT -s 192.168.3.0/24 -j REJECT
+  ```
 </br></br></br>
 
 
 <a name="5"></a>
 ## SOAL NO 5
 ### Akses dari subnet GRESIK hanya diperbolehkan pada pukul 17.00 hingga pukul 07.00 setiap harinya. Selain itu paket akan di REJECT.
+- Pada **MALANG** tambahkan iptables:
+  ```
+  iptables -A INPUT -s 192.168.2.0/24 -m time --timestart 07:00 --timestop 17:00 -j REJECT
+  ```
 </br></br></br>
 
 
