@@ -141,7 +141,7 @@ Berdasarkan gambar topologi di atas, dibuatlah file topologi.sh:
 
 **KEDIRI**
 - Lakukan install ```apt-get install isc-dhcp-relay```
-- Lakukan edit pada file ```/etc/default/isc-dhcp-relay```
+- Lakukan edit pada file ```/etc/default/isc-dhcp-relay```</br>
   ![testestes](https://github.com/messyme/Jarkom_Modul5_Lapres_B12/blob/main/files/soal-d-3.png)
 - Lakukan restart dengan perintah ```service isc-dhcp```
 </br>
@@ -158,7 +158,7 @@ Berdasarkan gambar topologi di atas, dibuatlah file topologi.sh:
 
 **BATU**
 - Lakukan install ```apt-get install isc-dhcp-relay```
-- Lakukan edit pada file ```/etc/dhcp/dhcp.conf```
+- Lakukan edit pada file ```/etc/dhcp/dhcp.conf```</br>
   ![testestes](https://github.com/messyme/Jarkom_Modul5_Lapres_B12/blob/main/files/soal-d-5.png)
 </br>
 
